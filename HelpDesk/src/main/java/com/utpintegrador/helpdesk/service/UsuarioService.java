@@ -4,10 +4,12 @@ import com.utpintegrador.helpdesk.model.*;
 import com.utpintegrador.helpdesk.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+
 
 @Service // Marca esta clase como un Servicio de Spring
 public class UsuarioService {
@@ -26,6 +28,9 @@ public class UsuarioService {
         this.rolRepository = rolRepository;
         this.areaRepository = areaRepository;
     }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     // --- Métodos de Lógica de Negocio ---
 
@@ -42,6 +47,9 @@ public class UsuarioService {
 
         Area area = areaRepository.findById(areaId)
                 .orElseThrow(() -> new RuntimeException("Área no encontrada con id: " + areaId));
+
+        String passCifrado = passwordEncoder.encode(usuario.getPasswoord());
+        usuario.setPasswoord(passCifrado); // Guardamos la versión encriptada
 
         // 2. Lógica de Negocio: Asignar las entidades encontradas
         usuario.setRol(rol);

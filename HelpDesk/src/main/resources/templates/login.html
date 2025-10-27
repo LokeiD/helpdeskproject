@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head lang="en">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Login</title>
+    <title>Integrador :: Acceso</title>
 
     <link th:href="@{/img/favicon.144x144.png}" rel="apple-touch-icon" type="image/png" sizes="144x144">
     <link th:href="@{/img/favicon.114x114.png}" rel="apple-touch-icon" type="image/png" sizes="114x114">
@@ -19,37 +19,75 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-
 <div class="page-center">
     <div class="page-center-in">
         <div class="container-fluid">
-            <form class="sign-box">
+
+            <form class="sign-box" th:action="@{/login}" method="post" id="login_form">
+
+                <input type="hidden" id="rol_id" name="rol_id" value="1">
+
                 <div class="sign-avatar">
-                    <img th:src="@{/img/avatar-sign.png}" alt="">
+                    <img th:src="@{/img/avatar-sign.png}" alt="" id="imgtipo">
                 </div>
-                <header class="sign-title">Iniciar Sesión</header>
+                <header class="sign-title" id="lbltitulo">Iniciar Sesión</header>
+
+                <div th:if="${param.error}" class="alert alert-warning alert-icon alert-close alert-dismissible fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <i class="font-icon font-icon-warning"></i>
+                    El Usuario y/o Contraseña son incorrectos.
+                </div>
+
+                <div th:if="${param.logout}" class="alert alert-success" role="alert">
+                    Has cerrado sesión exitosamente.
+                </div>
+
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Correo electrónico"/>
+                    <input type="text" id="usu_correo" name="username" class="form-control" placeholder="Correo Electronico" required/>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" placeholder="Contraseña"/>
+                    <input type="password" id="usu_pass" name="password" class="form-control" placeholder="Contraseña" required/>
                 </div>
                 <div class="form-group">
                     <div class="float-right reset">
-                        <a th:href="@{/reset-password}">Recuperar contraseña</a>
+                        <a href="view/ResetPassword/">Recuperar Contraseña</a>
+                    </div>
+                    <div class="float-left reset">
+                        <a href="view/accesosoporte/">Acceso Soporte</a>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-rounded">Iniciar sesión</button>
-                <p class="sign-note">¿Aún no tienes cuenta? <a th:href="@{/sign-in.html}">Registrate</a></p>
+                <div class="form-group" style="display: flex; justify-content: center; align-items: center;">
+                    <div id="g_id_onload"
+                         data-client_id="592225408682-0k7df94bqpucikiovudb27idooij9slm.apps.googleusercontent.com"
+                         data-context="signin"
+                         data-ux_mode="popup"
+                         data-callback="handleCredentialResponse"
+                         data-auto_prompt="false">
+                    </div>
+                    <div class="g_id_signin"
+                         data-type="standard"
+                         data-shape="rectangular"
+                         data-theme="outline"
+                         data-text="signin_with"
+                         data-size="large"
+                         data-logo_alignment="left"></div>
+                </div>
+
+                <button type="submit" class="btn btn-rounded">Iniciar Sesion</button>
             </form>
         </div>
     </div>
-</div><script th:src="@{/js/lib/jquery/jquery.min.js}"></script>
+</div>
+
+<script th:src="@{/js/lib/jquery/jquery.min.js}"></script>
 <script th:src="@{/js/lib/tether/tether.min.js}"></script>
 <script th:src="@{/js/lib/bootstrap/bootstrap.min.js}"></script>
 <script th:src="@{/js/plugins.js}"></script>
 <script type="text/javascript" th:src="@{/js/lib/match-height/jquery.matchHeight.min.js}"></script>
 <script>
+    // El JavaScript interno se queda exactamente igual
     $(function() {
         $('.page-center').matchHeight({
             target: $('html')
@@ -66,5 +104,8 @@
     });
 </script>
 <script th:src="@{/js/app.js}"></script>
+<script src="https://accounts.google.com/gsi/client" async></script>
+<script type="text/javascript" th:src="@{/datos.js}"></script>
+
 </body>
 </html>

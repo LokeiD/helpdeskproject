@@ -5,59 +5,66 @@ import com.utpintegrador.helpdesk.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDateTime; // Asegúrate de importar esto
 import java.util.List;
 
 @Service
 public class TicketService {
 
-    // ¡Necesitamos 3 repositorios para crear un ticket!
     private final TicketRepository ticketRepository;
     private final UsuarioRepository usuarioRepository;
     private final SubCategoriaRepository subCategoriaRepository;
 
+    // --- ¡AÑADE ESTE REPOSITORIO! ---
+    private final PrioridadRepository prioridadRepository;
+
+    // --- ¡MODIFICA EL CONSTRUCTOR! ---
     @Autowired
     public TicketService(TicketRepository ticketRepository,
                          UsuarioRepository usuarioRepository,
-                         SubCategoriaRepository subCategoriaRepository) {
+                         SubCategoriaRepository subCategoriaRepository,
+                         PrioridadRepository prioridadRepository) { // ¡Añádelo!
         this.ticketRepository = ticketRepository;
         this.usuarioRepository = usuarioRepository;
         this.subCategoriaRepository = subCategoriaRepository;
+        this.prioridadRepository = prioridadRepository; // ¡Añádelo!
     }
 
-    // --- MÉTODOS CON LÓGICA DE NEGOCIO ---
-
+    // --- MÉTODO CON LÓGICA DE NEGOCIO MODIFICADO ---
     /**
-     * Crea un nuevo ticket.
-     * Recibe los datos "sueltos" del controlador, aplica la lógica de negocio
-     * y arma la entidad Ticket para guardarla.
+     * Crea un nuevo ticket desde el formulario.
+     * Busca las entidades relacionadas (Usuario, SubCategoria, Prioridad)
+     * y guarda el ticket principal.
      */
-    public Ticket crearNuevoTicket(String titulo, Integer usuarioId, Integer subCategoriaId) {
+    public Ticket crearTicket(Integer usuId, Integer subCatId, Integer prioId, String titulo) {
 
         // 1. Lógica de Validación: Buscar las entidades relacionadas
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + usuarioId));
+        Usuario usuario = usuarioRepository.findById(usuId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + usuId));
 
-        SubCategoria subCategoria = subCategoriaRepository.findById(subCategoriaId)
-                .orElseThrow(() -> new RuntimeException("SubCategoría no encontrada con id: " + subCategoriaId));
+        SubCategoria subCategoria = subCategoriaRepository.findById(subCatId)
+                .orElseThrow(() -> new RuntimeException("SubCategoría no encontrada con id: " + subCatId));
+
+        Prioridad prioridad = prioridadRepository.findById(prioId)
+                .orElseThrow(() -> new RuntimeException("Prioridad no encontrada con id: " + prioId));
 
         // 2. Lógica de Negocio: Armar el nuevo ticket
         Ticket nuevoTicket = new Ticket();
         nuevoTicket.setTitulo(titulo);
-        nuevoTicket.setUsuario(usuario); // Asignamos el objeto completo
-        nuevoTicket.setSubCategoria(subCategoria); // Asignamos el objeto completo
+        nuevoTicket.setUsuario(usuario);
+        nuevoTicket.setSubCategoria(subCategoria);
+        nuevoTicket.setPrioridad(prioridad); // ¡Asignamos la prioridad!
 
-        // 3. Lógica de Negocio: Establecer valores por defecto
-        nuevoTicket.setFechaCreacion(LocalDateTime.now()); // ¡Regla de negocio!
-        nuevoTicket.setEstado(true); // ¡Regla de negocio! (true = Activo)
-
-        // El resto de campos (Fecha_Cierre, Prioridad) quedan nulos, como debe ser.
+        // 3. Lógica de Negocio: Establecer valores por defecto para el Ticket
+        nuevoTicket.setFechaCreacion(LocalDateTime.now());
+        nuevoTicket.setEstado(true); // true = Abierto (Activo)
+        // Fecha_Cierre queda nulo
 
         // 4. Guardar en la BD
         return ticketRepository.save(nuevoTicket);
     }
 
-    // --- Métodos más simples ---
+    // --- Métodos más simples (Sin cambios) ---
 
     public List<Ticket> obtenerTodosLosTickets() {
         return ticketRepository.findAll();

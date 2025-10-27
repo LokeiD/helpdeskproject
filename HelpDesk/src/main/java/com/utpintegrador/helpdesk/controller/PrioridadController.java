@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors; // <-- AÑADIR import
 
 @RestController
 @RequestMapping("/api/prioridades") // URL base para prioridades
@@ -22,15 +23,22 @@ public class PrioridadController {
         this.prioridadService = prioridadService;
     }
 
-    // ENDPOINT: Obtener todas las prioridades
-    // GET http://localhost:8080/api/prioridades
+    /**
+     * ENDPOINT MODIFICADO: Obtener SOLO las prioridades ACTIVAS.
+     * GET http://localhost:8080/api/prioridades
+     * Devuelve una lista JSON de prioridades activas para los combos.
+     */
     @GetMapping
-    public List<Prioridad> obtenerTodas() {
-        return prioridadService.obtenerTodasLasPrioridades();
+    public List<Prioridad> obtenerTodasActivas() {
+        List<Prioridad> todas = prioridadService.obtenerTodasLasPrioridades();
+        // Usamos Streams de Java para filtrar la lista
+        return todas.stream()
+                .filter(Prioridad::isEstado) // Filtra solo las que tienen estado = true
+                .collect(Collectors.toList()); // Devuelve la nueva lista filtrada
     }
 
-    // ENDPOINT: Obtener una prioridad por ID
-    // GET http://localhost:8080/api/prioridades/101
+    // ENDPOINT: Obtener una prioridad por ID (Sin cambios)
+    // GET http://localhost:8080/api/prioridades/{id}
     @GetMapping("/{id}")
     public ResponseEntity<Prioridad> obtenerPorId(@PathVariable Integer id) {
         Optional<Prioridad> prioridad = prioridadService.obtenerPrioridadPorId(id);
@@ -39,7 +47,7 @@ public class PrioridadController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // ENDPOINT: Crear una nueva prioridad
+    // ENDPOINT: Crear una nueva prioridad (Sin cambios)
     // POST http://localhost:8080/api/prioridades
     // Body (JSON): { "nombrePrioridad": "Alta", "estado": true }
     @PostMapping
@@ -48,8 +56,8 @@ public class PrioridadController {
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPrioridad);
     }
 
-    // ENDPOINT: Actualizar una prioridad
-    // PUT http://localhost:8080/api/prioridades/101
+    // ENDPOINT: Actualizar una prioridad (Sin cambios)
+    // PUT http://localhost:8080/api/prioridades/{id}
     // Body (JSON): { "nombrePrioridad": "MUY ALTA", "estado": true }
     @PutMapping("/{id}")
     public ResponseEntity<Prioridad> actualizarPrioridad(@PathVariable Integer id, @RequestBody Prioridad prioridad) {
@@ -64,8 +72,8 @@ public class PrioridadController {
         return ResponseEntity.ok(prioridadActualizada);
     }
 
-    // ENDPOINT: Eliminar una prioridad
-    // DELETE http://localhost:8080/api/prioridades/101
+    // ENDPOINT: Eliminar una prioridad (Sin cambios)
+    // DELETE http://localhost:8080/api/prioridades/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarPrioridad(@PathVariable Integer id) {
         prioridadService.eliminarPrioridad(id);
