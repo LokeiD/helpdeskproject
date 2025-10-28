@@ -1,17 +1,16 @@
 <header class="site-header" th:fragment="header-principal" xmlns:th="http://www.w3.org/1999/xhtml">
   <div class="container-fluid">
 
-    <a th:href="@{/}" class="site-logo">
+    <a class="site-logo">
       <h2>HelpDesk</h2>
+      <button id="show-hide-sidebar-toggle" class="show-hide-sidebar">
+        <span>toggle menu</span>
+      </button>
+
+      <button class="hamburger hamburger--htla">
+        <span>toggle menu</span>
+      </button>
     </a>
-
-    <button id="show-hide-sidebar-toggle" class="show-hide-sidebar">
-      <span>toggle menu</span>
-    </button>
-
-    <button class="hamburger hamburger--htla">
-      <span>toggle menu</span>
-    </button>
 
     <div class="site-header-content">
       <div class="site-header-content-in">
