@@ -25,4 +25,11 @@ public class HomeController {
         // el archivo src/main/resources/templates/nuevoticket.html
         return "nuevoticket";
     }
+
+    @GetMapping("/mantenimiento/usuario")
+    public String showMntUsuarioPage() {
+        // Esto le dice a Spring que busque el archivo:
+        // /src/main/resources/templates/mntusuario.html
+        return "mntusuario";
+    }
 }

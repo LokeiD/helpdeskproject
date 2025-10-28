@@ -8,75 +8,144 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map; // Para mensajes de respuesta simples
 import java.util.Optional;
+// import java.util.stream.Collectors; // No es necesario ahora
 
 @RestController
-@RequestMapping("/api/usuarios") // URL base para usuarios
+@RequestMapping("/api/usuarios")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
-    // 1. Inyectamos el servicio de Usuario
     @Autowired
     public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
-    // ENDPOINT: Obtener todos los usuarios
-    // GET http://localhost:8080/api/usuarios
+    /**
+     * GET /api/usuarios
+     * Obtiene todos los usuarios y los devuelve en el formato
+     * esperado por DataTables: { "data": [...] }
+     */
     @GetMapping
-    public List<Usuario> obtenerTodos() {
-        return usuarioService.obtenerTodosLosUsuarios();
+    public ResponseEntity<Map<String, List<Usuario>>> obtenerTodosParaDataTable() { // <-- Tipo de retorno corregido
+        // TODO: Reemplazar 'Usuario' con un 'UsuarioDTO' sin 'passwoord'
+        List<Usuario> usuarios = usuarioService.obtenerTodosLosUsuarios();
+        // Temporalmente quitar contraseñas
+        usuarios.forEach(u -> u.setPasswoord(null));
+
+        // Envolvemos la lista en un Map con la clave "data"
+        Map<String, List<Usuario>> response = Map.of("data", usuarios);
+
+        // --- ¡LÍNEA CORREGIDA! ---
+        // Devolvemos el Map 'response', no la lista 'usuarios'
+        return ResponseEntity.ok(response);
+        // -------------------------
     }
 
-    // ENDPOINT: Obtener un usuario por ID
-    // GET http://localhost:8080/api/usuarios/101
+    /**
+     * GET /api/usuarios/{id}
+     * Obtiene un usuario por ID (para cargar datos al editar en el modal).
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> obtenerPorId(@PathVariable Integer id) {
-        Optional<Usuario> usuario = usuarioService.obtenerUsuarioPorId(id);
-
-        return usuario.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    // ENDPOINT: Crear un nuevo usuario (¡Este es el importante!)
-    // Petición: POST http://localhost:8080/api/usuarios?rolId=101&areaId=102
-    // Body (JSON): {
-    //   "nombres": "Diego",
-    //   "apellidoPaterno": "Fernández",
-    //   "apellidoMaterno": "Alburuqueque",
-    //   "correo": "diego@correo.com",
-    //   "passwoord": "miPasswordSeguro"
-    // }
-    @PostMapping
-    public ResponseEntity<Usuario> crearUsuario(
-            @RequestBody Usuario usuario, // 1. Spring toma el JSON del Body
-            @RequestParam Integer rolId,  // 2. Spring toma 'rolId' de la URL
-            @RequestParam Integer areaId  // 3. Spring toma 'areaId' de la URL
-    ) {
-        // 4. Pasamos todo al servicio, que ya sabe qué hacer
-        Usuario nuevoUsuario = usuarioService.crearUsuario(usuario, rolId, areaId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
-    }
-
-    // ENDPOINT: Eliminar un usuario (Baja Lógica)
-    // Petición: DELETE http://localhost:8080/api/usuarios/101
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Usuario> eliminarUsuario(@PathVariable Integer id) {
-        // Usamos el método de BAJA LÓGICA que creamos en el servicio
-        try {
-            Usuario usuarioEliminado = usuarioService.eliminarUsuarioLogicamente(id);
-            return ResponseEntity.ok(usuarioEliminado); // Devuelve 200 OK y el usuario actualizado
-        } catch (RuntimeException e) {
-            // Esto pasa si el usuario no se encuentra (lanzado por orElseThrow)
+        Optional<Usuario> usuarioOpt = usuarioService.obtenerUsuarioPorId(id);
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+            usuario.setPasswoord(null); // Temporalmente quitar contraseña
+            return ResponseEntity.ok(usuario);
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    // NOTA SOBRE ACTUALIZAR (PUT):
-    // El endpoint para actualizar (PUT) es más complejo.
-    // Necesitaríamos crear un nuevo método en 'UsuarioService' llamado 'actualizarUsuario'
-    // que sepa manejar qué campos se pueden cambiar (ej: no se debería cambiar la fecha de creación)
-    // y si se puede cambiar el Rol o Área.
-    // Por ahora, nos enfocamos en Crear, Leer y Borrar.
+    /**
+     * POST /api/usuarios
+     * Crea un nuevo usuario.
+     */
+    @PostMapping
+    public ResponseEntity<?> crearUsuario(@RequestBody Usuario usuarioRequest) {
+        try {
+            Usuario nuevoUsuario = usuarioService.crearUsuarioConObjetos(usuarioRequest);
+            nuevoUsuario.setPasswoord(null);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
+        } catch (IllegalArgumentException e) { // Captura validaciones específicas
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (RuntimeException e) { // Captura otros errores (ej: Rol no encontrado)
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Error interno al crear usuario."));
+        }
+    }
+
+
+    /**
+     * PUT /api/usuarios/{id}
+     * Actualiza un usuario existente.
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizarUsuario(@PathVariable Integer id, @RequestBody Usuario usuarioRequest) {
+        try {
+            Usuario usuarioActualizado = usuarioService.actualizarUsuario(id, usuarioRequest);
+            usuarioActualizado.setPasswoord(null);
+            return ResponseEntity.ok(usuarioActualizado);
+        } catch (IllegalArgumentException e) { // Captura validaciones específicas
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (RuntimeException e) { // Captura otros errores (ej: Usuario/Rol no encontrado)
+            e.printStackTrace();
+            if (e.getMessage() != null && e.getMessage().startsWith("Usuario no encontrado")) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Error interno al actualizar usuario."));
+        }
+    }
+
+
+    /**
+     * DELETE /api/usuarios/{id}
+     * Elimina (lógicamente) un usuario.
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarUsuario(@PathVariable Integer id) {
+        try {
+            usuarioService.eliminarUsuarioLogicamente(id);
+            return ResponseEntity.ok(Map.of("message", "Usuario eliminado lógicamente con ID: " + id));
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Error interno al eliminar usuario."));
+        }
+    }
+
+    // --- ¡NUEVO ENDPOINT PARA ACTIVAR! ---
+    /**
+     * PUT /api/usuarios/{id}/activar
+     * Reactiva un usuario que fue eliminado lógicamente.
+     */
+    @PutMapping("/{id}/activar")
+    public ResponseEntity<?> activarUsuario(@PathVariable Integer id) {
+        try {
+            usuarioService.activarUsuario(id);
+            return ResponseEntity.ok(Map.of("message", "Usuario reactivado con ID: " + id));
+        } catch (RuntimeException e) {
+            // Si el usuario no se encuentra
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Error interno al activar usuario."));
+        }
+    }
+    // -------------------------------------
+
 }
