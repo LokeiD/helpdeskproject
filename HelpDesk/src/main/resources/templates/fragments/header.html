@@ -22,7 +22,8 @@
           </div>
           <div class="dropdown user-menu">
             <button class="dropdown-toggle" id="dd-user-menu" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <img th:src="@{'/' + ${#authentication.principal.rolId} + '.jpg'}" alt="Avatar">
+              <!-- <img th:src="@{'/' + ${#authentication.principal.rolId} + '.jpg'}" alt="Avatar"> -->
+              <img th:src="@{/img/photo-92-1.jpg}" alt="Avatar">
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dd-user-menu">
               <a class="dropdown-item" th:href="@{/perfil}"><span class="font-icon glyphicon glyphicon-user"></span>Perfil</a>
