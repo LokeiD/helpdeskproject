@@ -40,22 +40,20 @@ public class DetalleEvidenciaService {
     /**
      * Guarda un nuevo detalle de evidencia, asociándolo a una evidencia existente.
      */
-    public DetalleEvidencia guardarDetalleEvidencia(String nombreDetalle, Integer evidenciaId) {
-
-        // 1. Lógica de Validación: Buscar la Evidencia padre
+    public DetalleEvidencia guardarDetalleArchivo(String nombreArchivoUnico, Integer evidenciaId) {
         Evidencia evidencia = evidenciaRepository.findById(evidenciaId)
                 .orElseThrow(() -> new RuntimeException("Evidencia no encontrada con id: " + evidenciaId));
 
-        // 2. Lógica de Negocio: Crear la nueva entidad
         DetalleEvidencia detalle = new DetalleEvidencia();
-        detalle.setNombre(nombreDetalle);
+        // Guardamos el nombre único del archivo (ej: uuid-aleatorio.jpg) como Nombre
+        detalle.setNombre(nombreArchivoUnico);
         detalle.setEvidencia(evidencia);
 
-        // 3. Guardar en la BD
         return detalleEvidenciaRepository.save(detalle);
     }
 
     public void eliminarDetalleEvidencia(Integer id) {
+        // TODO: Al eliminar un detalle, también deberíamos borrar el archivo físico asociado.
         detalleEvidenciaRepository.deleteById(id);
     }
 }

@@ -12,7 +12,7 @@ public class DetalleTicket {
     @Column(name = "Codigo_Detalle_De_Ticket")
     private Integer codigoDetalleDeTicket;
 
-    @Column(name = "Fecha_Asignacion", nullable = false)
+    @Column(name = "Fecha_Asignacion")
     private LocalDate fechaAsignacion;
 
     @Column(name = "Descripcion", nullable = false, columnDefinition = "VARCHAR(MAX)")
@@ -26,7 +26,7 @@ public class DetalleTicket {
 
     // Muchos detalles (asignaciones) pueden ser hechos por UN usuario (el técnico)
     @ManyToOne
-    @JoinColumn(name = "Codigo_Usuario", nullable = false)
+    @JoinColumn(name = "Codigo_Usuario")
     private Usuario usuario;
 
     // Muchos detalles pueden registrar UN estado

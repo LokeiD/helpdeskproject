@@ -48,33 +48,37 @@ public class DetalleTicketService {
      */
     public DetalleTicket crearDetalleTicket(String descripcion, Integer ticketId, Integer usuarioId, Integer estadoId) {
 
-        // 1. Lógica de Validación: Validar que todas las partes existan
+        // 1. Validar Ticket y Estado (siguen siendo obligatorios)
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket no encontrado con id: " + ticketId));
-
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario (técnico) no encontrado con id: " + usuarioId));
-
         EstadoTicket estado = estadoTicketRepository.findById(estadoId)
                 .orElseThrow(() -> new RuntimeException("Estado de Ticket no encontrado con id: " + estadoId));
 
-        // 2. Lógica de Negocio: Crear la nueva entrada de bitácora
+        // 2. Validar Usuario SÓLO si usuarioId NO es null
+        Usuario usuarioAsignado = null; // Por defecto es null
+        if (usuarioId != null) {
+            usuarioAsignado = usuarioRepository.findById(usuarioId)
+                    .orElseThrow(() -> new RuntimeException("Usuario (técnico) no encontrado con id: " + usuarioId));
+        }
+
+        // 3. Crear la nueva entrada de bitácora
         DetalleTicket detalle = new DetalleTicket();
         detalle.setDescripcion(descripcion);
-        detalle.setFechaAsignacion(LocalDate.now()); // Fecha en que se hace el registro
-
-        // 3. Asignar las entidades relacionadas
         detalle.setTicket(ticket);
-        detalle.setUsuario(usuario);
         detalle.setEstadoTicket(estado);
+        detalle.setUsuario(usuarioAsignado); // Será null si usuarioId fue null
 
-        // 4. TODO: Lógica de Negocio Adicional
-        // Aquí es donde también deberíamos actualizar el estado principal del TICKET.
-        // Por ejemplo, si el 'estado.getNombreEstado()' es "Resuelto" o "Cerrado",
-        // deberíamos actualizar 'ticket.setEstado(false)' y 'ticket.setFechaCierre(LocalDateTime.now())'
-        // y luego guardar el 'ticket' con ticketRepository.save(ticket).
+        // 4. Establecer Fecha_Asignacion SÓLO si hay un usuario asignado
+        if (usuarioAsignado != null) {
+            detalle.setFechaAsignacion(LocalDate.now()); // Fecha en que se asigna
+        } else {
+            detalle.setFechaAsignacion(null); // Aseguramos que sea null si no hay técnico
+        }
 
-        // 5. Guardar el nuevo detalle
+        // 5. TODO: Lógica Adicional (actualizar estado del Ticket principal)
+        // ... (Tu lógica para cerrar el ticket si el estado es "Solucionado", etc.) ...
+
+        // 6. Guardar el nuevo detalle
         return detalleTicketRepository.save(detalle);
     }
 }

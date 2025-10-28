@@ -18,4 +18,11 @@ public class HomeController {
         // /src/main/resources/templates/home.html
         return "home";
     }
+
+    @GetMapping("/nuevo-ticket")
+    public String showNuevoTicketPage() {
+        // Esto le dice a Spring/Thymeleaf que busque y muestre
+        // el archivo src/main/resources/templates/nuevoticket.html
+        return "nuevoticket";
+    }
 }

@@ -46,7 +46,7 @@ public class DetalleEvidenciaController {
     ) {
         try {
             // 3. Pasamos todo al servicio
-            DetalleEvidencia nuevoDetalle = detalleEvidenciaService.guardarDetalleEvidencia(nombreDetalle, evidenciaId);
+            DetalleEvidencia nuevoDetalle = detalleEvidenciaService.guardarDetalleArchivo(nombreDetalle, evidenciaId);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevoDetalle);
         } catch (RuntimeException e) {
             // Error si la evidencia no existe
