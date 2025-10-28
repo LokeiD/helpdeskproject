@@ -1,0 +1,22 @@
+/* ======================================================== */
+/* FIX V6: Forzar Alineación + Color H2 (Tema Oscuro)     */
+/* USANDO ESTRUCTURA HTML INCORRECTA (Botones dentro de A) */
+/* ======================================================== */
+
+/* 1. Hacemos que el enlace 'a.site-logo' se comporte como Flexbox */
+/* Esto aplica SIEMPRE, no solo con el tema oscuro, para forzar   */
+/* la alineación interna que buscas.                      */
+.site-logo {
+    display: flex !important;       /* Fuerza Flexbox */
+    align-items: center !important; /* Centra H2 y botones verticalmente */
+    text-decoration: none !important; /* Quita subrayado */
+
+}
+
+
+/* 3. Estilos específicos para el H2 con tema oscuro */
+body.with-side-menu.theme-side-litmus-blue .site-logo h2 {
+    color: white !important;      /* ¡Color blanco para el texto! */
+    font-size: 30px !important;   /* Restaura tamaño original */
+
+}

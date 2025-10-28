@@ -14085,6 +14085,7 @@ body.sidebar-hidden .side-menu-addl + .page-content {
     margin: 0 !important;
   }
 }
+
 @media print and (max-width: 1056px) {
   .chrome-browser.with-side-menu .page-content {
     padding-left: 0;
