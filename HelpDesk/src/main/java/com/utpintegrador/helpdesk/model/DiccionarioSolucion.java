@@ -19,7 +19,7 @@ public class DiccionarioSolucion {
     private String descripcion;
 
     @Column(name = "Fecha", nullable = false)
-    private LocalDate fecha; // DATE de SQL se mapea a LocalDate en Java
+    private LocalDate fecha;
 
     //* RELACIONES
     // Muchas soluciones pueden ser creadas por UN usuario
@@ -37,7 +37,6 @@ public class DiccionarioSolucion {
     }
 
     //* Getters - Setters
-
     public Integer getCodigoDiccionarioDeSolucion() {
         return codigoDiccionarioDeSolucion;
     }

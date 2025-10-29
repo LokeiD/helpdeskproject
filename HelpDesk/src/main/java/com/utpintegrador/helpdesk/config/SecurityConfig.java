@@ -11,9 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    // ¡¡MUY IMPORTANTE!!
-    // Define cómo se encriptarán las contraseñas.
+    //* Encriptar contraseña por BCrypt
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -23,34 +21,29 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        // 1. Permite acceso público a estas URLs (login y archivos estáticos)
+                        //* URLs publicas
                         .requestMatchers(
                                 "/login",
                                 "/css/**",
                                 "/js/**",
                                 "/img/**",
                                 "/fonts/**",
-                                "/datos.js",
-                                "/1.jpg" // Tu imagen de avatar
+                                "/datos.js"
                         ).permitAll()
-                        // 2. Todas las demás URLs requieren estar logueado
+
+                        //* Otras URLs (Requieren autenticacion)
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        // 3. Le decimos dónde está nuestra página de login
                         .loginPage("/login")
-                        // 4. Le decimos a dónde ir si el login es exitoso
-                        .defaultSuccessUrl("/home", true) // Redirige a la página principal
-                        // 5. Le decimos a dónde ir si el login falla
+                        .defaultSuccessUrl("/home", true)
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        // 6. Configura el logout (que por defecto es en /logout)
-                        .logoutSuccessUrl("/login?logout=true") // A dónde ir después de logout
+                        .logoutSuccessUrl("/login?logout=true")
                         .permitAll()
                 );
-
         return http.build();
     }
 }

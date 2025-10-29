@@ -10,26 +10,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/evidencias") // URL base
+@RequestMapping("/api/evidencias")
 public class EvidenciaController {
-
     private final EvidenciaService evidenciaService;
 
-    // 1. Inyectamos el servicio
     @Autowired
     public EvidenciaController(EvidenciaService evidenciaService) {
         this.evidenciaService = evidenciaService;
     }
 
-    // ENDPOINT: Obtener todas las evidencias (poco común, pero útil)
-    // GET http://localhost:8080/api/evidencias
     @GetMapping
-    public List<Evidencia> obtenerTodas() {
-        return evidenciaService.obtenerTodasLasEvidencias();
+    public List<Evidencia> obtenerEvidencias() {
+        return evidenciaService.obtenerEvidencias();
     }
 
-    // ENDPOINT: Obtener una evidencia por ID
-    // GET http://localhost:8080/api/evidencias/101
     @GetMapping("/{id}")
     public ResponseEntity<Evidencia> obtenerPorId(@PathVariable Integer id) {
         return evidenciaService.obtenerEvidenciaPorId(id)
@@ -55,11 +49,4 @@ public class EvidenciaController {
         }
     }
 
-    // ENDPOINT: Eliminar una evidencia
-    // DELETE http://localhost:8080/api/evidencias/101
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarEvidencia(@PathVariable Integer id) {
-        evidenciaService.eliminarEvidencia(id);
-        return ResponseEntity.noContent().build();
-    }
 }

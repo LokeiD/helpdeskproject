@@ -5,7 +5,6 @@ function init(){
 }
 
 $(document).ready(function() {
-    /* 1. Inicializar SummerNote */
     $('#tick_descrip').summernote({
         height: 150,
         lang: "es-ES",
@@ -19,7 +18,7 @@ $(document).ready(function() {
         ]
     });
 
-    /* 2. Llenar Combo categoria */
+    // Cargar ComboBox categoria
     $.get("/api/categorias", function(data) {
         $('#cat_id').empty().append('<option value="">Seleccionar</option>');
         $.each(data, function(index, value) {
@@ -28,7 +27,7 @@ $(document).ready(function() {
         $('#cat_id').select2();
     });
 
-    /* 3. Evento change de Categoria */
+    //Evento change de Categoria
     $("#cat_id").change(function(){
         var cat_id = $(this).val();
         if (cat_id) {
@@ -44,7 +43,7 @@ $(document).ready(function() {
         }
     });
 
-    /* 4. Llenar combo Prioridad */
+    //Cargar  ComboBox Prioridad
     $.get("/api/prioridades", function(data) {
         $('#prio_id').empty().append('<option value="">Seleccionar</option>');
         $.each(data, function(index, value) {
@@ -52,55 +51,29 @@ $(document).ready(function() {
         });
         $('#prio_id').select2();
     });
-
-    // Inicializar los selects vacíos con Select2
     $('#cats_id').select2();
 
-}); // Fin de $(document).ready
+});
 
 function guardaryeditar(e){
     e.preventDefault();
-
     $('#btnguardar').prop("disabled",true);
     $('#btnguardar').html('<i class="fa fa-spinner fa-spin"></i> Espere..');
-
-    // Esta línea YA incluye todos los campos, incluido el input type="file"
     var formData = new FormData($("#ticket_form")[0]);
-
-    /* Validar campos */
     if ($('#tick_descrip').summernote('isEmpty') || $('#tick_titulo').val()==='' || $('#cats_id').val() === '' || $('#cat_id').val() === '' || $('#prio_id').val() === ''){
         swal("Advertencia!", "Campos Obligatorios Vacios", "warning");
         $('#btnguardar').prop("disabled",false);
         $('#btnguardar').html('Guardar');
     } else {
-
-        // ========== ELIMINAR O COMENTAR ESTE BUCLE ==========
-        /*
-        var totalfiles = $('#fileElem')[0].files.length;
-        console.log("Número de archivos seleccionados:", totalfiles);
-        console.log("Archivos:", $('#fileElem')[0].files);
-        for (var i = 0; i < totalfiles; i++) {
-            console.log("Añadiendo archivo al FormData:", $('#fileElem')[0].files[i].name);
-            formData.append("files[]", $('#fileElem')[0].files[i]); // <-- ESTO CAUSABA LA DUPLICACIÓN
-        }
-        */
-        // =======================================================
-
-
-        // ========== LOG ANTES DE ENVIAR (Opcional, para verificar) ==========
         console.log("Contenido de FormData antes de enviar:");
         for (var pair of formData.entries()) {
-            // Si es un archivo, muestra su nombre, si no, el valor
             console.log(pair[0]+ ': ' + (pair[1] instanceof File ? pair[1].name : pair[1]));
         }
-        // ================================================================
-
-
-        /* Guardar Ticket */
+        // Guardar Ticket
         $.ajax({
             url: "/api/tickets/insertar",
             type: "POST",
-            data: formData, // formData ya contiene los archivos correctamente
+            data: formData,
             contentType: false,
             processData: false,
             success: function(data){
@@ -121,7 +94,6 @@ function guardaryeditar(e){
                 $('#btnguardar').html('Guardar');
             }
         });
-    } // Fin del else (validación)
-} // Fin de guardaryeditar
-
+    }
+}
 init();

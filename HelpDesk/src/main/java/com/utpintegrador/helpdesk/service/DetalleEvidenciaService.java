@@ -10,24 +10,20 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Service // Marca esta clase como un Servicio de Spring
+@Service
 public class DetalleEvidenciaService {
 
-    // 1. Necesitamos ambos repositorios
     private final DetalleEvidenciaRepository detalleEvidenciaRepository;
     private final EvidenciaRepository evidenciaRepository;
 
-    // 2. Inyectamos los repositorios
     @Autowired
-    public DetalleEvidenciaService(DetalleEvidenciaRepository detalleEvidenciaRepository,
-                                   EvidenciaRepository evidenciaRepository) {
+    public DetalleEvidenciaService(DetalleEvidenciaRepository detalleEvidenciaRepository, EvidenciaRepository evidenciaRepository) {
         this.detalleEvidenciaRepository = detalleEvidenciaRepository;
         this.evidenciaRepository = evidenciaRepository;
     }
 
-    // --- Métodos CRUD básicos ---
 
-    public List<DetalleEvidencia> obtenerTodosLosDetalles() {
+    public List<DetalleEvidencia> obtenerDetalles() {
         return detalleEvidenciaRepository.findAll();
     }
 
@@ -35,17 +31,12 @@ public class DetalleEvidenciaService {
         return detalleEvidenciaRepository.findById(id);
     }
 
-    // --- Método con Lógica de Negocio ---
 
-    /**
-     * Guarda un nuevo detalle de evidencia, asociándolo a una evidencia existente.
-     */
     public DetalleEvidencia guardarDetalleArchivo(String nombreArchivoUnico, Integer evidenciaId) {
         Evidencia evidencia = evidenciaRepository.findById(evidenciaId)
                 .orElseThrow(() -> new RuntimeException("Evidencia no encontrada con id: " + evidenciaId));
 
         DetalleEvidencia detalle = new DetalleEvidencia();
-        // Guardamos el nombre único del archivo (ej: uuid-aleatorio.jpg) como Nombre
         detalle.setNombre(nombreArchivoUnico);
         detalle.setEvidencia(evidencia);
 

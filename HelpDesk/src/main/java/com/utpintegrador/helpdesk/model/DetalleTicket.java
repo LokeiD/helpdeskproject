@@ -39,7 +39,6 @@ public class DetalleTicket {
     }
 
     //* Getters - Setters
-
     public Integer getCodigoDetalleDeTicket() {
         return codigoDetalleDeTicket;
     }

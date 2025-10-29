@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Service // Marca esta clase como un Servicio de Spring
+@Service
 public class SubCategoriaService {
 
     private final SubCategoriaRepository subCategoriaRepository;
@@ -22,18 +22,10 @@ public class SubCategoriaService {
         this.categoriaRepository = categoriaRepository;
     }
 
-    // --- ¡MÉTODO NUEVO! ---
-    /**
-     * Obtiene una lista de subcategorías filtradas por el código de la categoría padre.
-     * @param catId El ID de la Categoría padre.
-     * @return Lista de SubCategorias.
-     */
     public List<SubCategoria> obtenerPorCategoria(Integer catId) {
-        // Llama al método mágico que debemos crear en el Repositorio
         return subCategoriaRepository.findByCategoria_CodigoCategoria(catId);
     }
 
-    // --- Métodos CRUD ---
 
     public List<SubCategoria> obtenerTodasLasSubCategorias() {
         return subCategoriaRepository.findAll();

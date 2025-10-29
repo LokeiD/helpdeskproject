@@ -21,7 +21,7 @@ public class Evidencia {
     //* RELACIÓN
     // Muchas evidencias pueden pertenecer a UN ticket
     @OneToOne
-    @JoinColumn(name = "Codigo_Ticket", nullable = false) // Esta es la columna FOREIGN KEY
+    @JoinColumn(name = "Codigo_Ticket", nullable = false)
     private Ticket ticket;
 
     //* Constructor vacío
@@ -29,8 +29,6 @@ public class Evidencia {
     }
 
     //* Getters y Setters
-    // (Generados con Alt + Insert)
-
     public Integer getCodigoEvidencia() {
         return codigoEvidencia;
     }

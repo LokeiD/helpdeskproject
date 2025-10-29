@@ -23,6 +23,7 @@ public class Comentario {
     @ManyToOne
     @JoinColumn(name = "Codigo_Usuario", nullable = false)
     private Usuario usuario;
+
     // Muchos comentarios pueden pertenecer a UN detalle de ticket
     @ManyToOne
     @JoinColumn(name = "Codigo_Detalle_De_Ticket", nullable = false)

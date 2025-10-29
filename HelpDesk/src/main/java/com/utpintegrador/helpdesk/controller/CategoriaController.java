@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors; // <-- AÑADIR import
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/categorias") // URL base para categorías
+@RequestMapping("/api/categorias")
 public class CategoriaController {
 
     private final CategoriaService categoriaService;
@@ -22,21 +22,16 @@ public class CategoriaController {
         this.categoriaService = categoriaService;
     }
 
-    /**
-     * ENDPOINT MODIFICADO: Obtener SOLO las categorías ACTIVAS.
-     * GET http://localhost:8080/api/categorias
-     * Devuelve una lista JSON de categorías activas para los combos.
-     */
     @GetMapping
-    public List<Categoria> obtenerTodasActivas() {
-        List<Categoria> todas = categoriaService.obtenerTodasLasCategorias();
-        // Usamos Streams de Java para filtrar la lista
+    public List<Categoria> obtenerCategoriasActivas() {
+        List<Categoria> todas = categoriaService.obtenerCategorias();
         return todas.stream()
-                .filter(Categoria::isEstado) // Filtra solo las que tienen estado = true
-                .collect(Collectors.toList()); // Devuelve la nueva lista filtrada
+                //* Filtrar y listar solo categorias activas
+                .filter(Categoria::isEstado)
+                .collect(Collectors.toList());
     }
 
-    // ENDPOINT: Obtener una categoría por ID (Sin cambios)
+
     @GetMapping("/{id}")
     public ResponseEntity<Categoria> obtenerPorId(@PathVariable Integer id) {
         Optional<Categoria> categoria = categoriaService.obtenerCategoriaPorId(id);
@@ -44,14 +39,12 @@ public class CategoriaController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // ENDPOINT: Crear una nueva categoría (Sin cambios)
     @PostMapping
     public ResponseEntity<Categoria> crearCategoria(@RequestBody Categoria categoria) {
         Categoria nuevaCategoria = categoriaService.guardarCategoria(categoria);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCategoria);
     }
 
-    // ENDPOINT: Actualizar una categoría (Sin cambios)
     @PutMapping("/{id}")
     public ResponseEntity<Categoria> actualizarCategoria(@PathVariable Integer id, @RequestBody Categoria categoria) {
         if (!categoriaService.obtenerCategoriaPorId(id).isPresent()) {
@@ -62,7 +55,6 @@ public class CategoriaController {
         return ResponseEntity.ok(categoriaActualizada);
     }
 
-    // ENDPOINT: Eliminar una categoría (Sin cambios)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarCategoria(@PathVariable Integer id) {
         categoriaService.eliminarCategoria(id);

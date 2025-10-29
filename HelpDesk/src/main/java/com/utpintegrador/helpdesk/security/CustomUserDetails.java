@@ -17,7 +17,6 @@ public class CustomUserDetails implements UserDetails {
         this.usuario = usuario;
     }
 
-    // --- Métodos estándar de UserDetails ---
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
@@ -55,8 +54,6 @@ public class CustomUserDetails implements UserDetails {
         return usuario.isEstado();
     }
 
-    // --- ¡MÉTODOS PERSONALIZADOS! (El reemplazo de $_SESSION) ---
-
     public Integer getId() {
         return usuario.getCodigoUsuario();
     }
@@ -72,6 +69,4 @@ public class CustomUserDetails implements UserDetails {
     public String getApellido() {
         return usuario.getApellidoPaterno();
     }
-
-    // (Puedes añadir cualquier otro getter que necesites de tu entidad Usuario)
 }

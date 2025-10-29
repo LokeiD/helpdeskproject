@@ -1,16 +1,12 @@
 <!DOCTYPE html>
-<!-- 1. Usa el layout principal -->
 <html lang="ES"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-  <!-- 2. Título específico -->
   <title>Mantenimiento Usuario</title>
 </head>
 <body>
-
-<!-- 3. Contenido principal -->
 <main layout:fragment="content">
   <header class="section-header">
     <div class="tbl">
@@ -36,30 +32,24 @@
         <th style="width: 10%;">A. Materno</th>
         <th class="d-none d-sm-table-cell" style="width: 10%;">Correo</th>
         <th class="d-none d-sm-table-cell" style="width: 10%;">Rol</th>
-        <th class="d-none d-sm-table-cell" style="width: 10%;">Area</th> <!-- Columna Nueva -->
+        <th class="d-none d-sm-table-cell" style="width: 10%;">Area</th>
         <th class="d-none d-sm-table-cell" style="width: 10%;">F. Modificación</th>
         <th class="d-none d-sm-table-cell" style="width: 10%;">F. Eliminación</th>
         <th class="d-none d-sm-table-cell" style="width: 5%;">Estado</th>
-        <th class="text-center" style="width: 5%;">Editar</th> <!-- Editar -->
-        <th class="text-center" style="width: 5%;">Eliminar</th> <!-- Eliminar -->
-        <th class="text-center" style="width: 5%;">Activar</th> <!-- Activar -->
+        <th class="text-center" style="width: 5%;">Editar</th>
+        <th class="text-center" style="width: 5%;">Eliminar</th>
+        <th class="text-center" style="width: 5%;">Activar</th>
       </tr>
       </thead>
       <tbody>
-      <!-- DataTable llenará esto dinámicamente -->
+
       </tbody>
     </table>
   </div>
-
-  <!-- 4. Incluimos el modal como fragmento -->
   <div th:replace="~{fragments/modalmantenimiento :: modal-usuario}"></div>
-
 </main>
-
-<!-- 5. Scripts específicos -->
 <th:block layout:fragment="js">
   <script type="text/javascript" th:src="@{/js/mntusuario.js}"></script>
 </th:block>
-
 </body>
 </html>

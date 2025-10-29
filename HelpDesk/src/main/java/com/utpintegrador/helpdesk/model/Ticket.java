@@ -48,7 +48,6 @@ public class Ticket {
     }
 
     //* Getters - Setters
-
     public Integer getCodigoTicket() {
         return codigoTicket;
     }
