@@ -49,13 +49,24 @@
 
     <section class="card">
       <header class="card-header">
-        Grafico Estadístico
+        Grafico Estadístico - Tickets por Categoria
       </header>
       <div class="card-block">
-        <div id="divgrafico" style="height: 250px;"></div>
+        <div id="divgraficocategoria" style="height: 250px;"></div>
       </div>
     </section>
 
+    <section class="card">
+      <header class="card-header">
+        Grafico Estadístico - Tickets por Area
+      </header>
+      <div class="card-block">
+        <div id="divgraficoarea" style="height: 250px;"></div>
+      </div>
+    </section>
+
+
+    <!--
     <section class="card">
       <header class="card-header">
         Calendario
@@ -64,7 +75,7 @@
         <div id="idcalendar"></div>
       </div>
     </section>
-
+    -->
   </div>
 </main>
 <th:block layout:fragment="js">
@@ -72,7 +83,7 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
 
   <script type="text/javascript" th:src="@{/js/lib/moment/moment-with-locales.min.js}"></script>
-  <script th:src="@{/js/lib/fullcalendar/fullcalendar.min.js}"></script>
+  <!-- <script th:src="@{/js/lib/fullcalendar/fullcalendar.min.js}"></script> -->
 
   <script type="text/javascript" th:src="@{/js/home.js}"></script>
 </th:block>
