@@ -40,4 +40,8 @@ public class HomeController {
     public String mostrarMntArea() {
         return "mntarea";
     }
+    @GetMapping("/consultar-ticket")
+    public String mostrarConsultarTicket() {
+        return "consultarticket";
+    }
 }

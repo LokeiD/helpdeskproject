@@ -2,6 +2,7 @@ package com.utpintegrador.helpdesk.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "DETALLE_DE_TICKETS")
@@ -22,6 +23,7 @@ public class DetalleTicket {
     // Muchos detalles de ticket pertenecen a UN solo ticket
     @ManyToOne
     @JoinColumn(name = "Codigo_Ticket", nullable = false)
+    @JsonIgnore
     private Ticket ticket;
 
     // Muchos detalles (asignaciones) pueden ser hechos por UN usuario (el técnico)

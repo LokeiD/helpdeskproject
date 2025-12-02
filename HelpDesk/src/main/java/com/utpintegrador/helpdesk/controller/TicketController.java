@@ -59,6 +59,27 @@ public class TicketController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/listar-por-usuario/{id}")
+    public ResponseEntity<Map<String, List<Ticket>>> listarPorUsuario(@PathVariable("id") Integer usuarioId) {
+        try {
+            // 1. Obtenemos la lista de tickets
+            List<Ticket> tickets = ticketService.obtenerTicketsPorUsuario(usuarioId);
+
+            // 2. (Opcional pero recomendado) Limpiamos contraseñas de usuarios relacionados
+            // para no enviarlas al frontend.
+            for (Ticket t : tickets) {
+                if (t.getUsuario() != null) t.getUsuario().setPasswoord(null);
+            }
+
+            // 3. Envolvemos en el mapa "data"
+            Map<String, List<Ticket>> response = Map.of("data", tickets);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 
     @PostMapping("/insertar")
     public ResponseEntity<?> guardarTicket(

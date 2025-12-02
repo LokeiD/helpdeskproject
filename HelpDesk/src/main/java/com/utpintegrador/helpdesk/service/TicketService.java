@@ -58,4 +58,8 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Ticket no encontrado con id: " + id));
     }
 
+    public List<Ticket> obtenerTicketsPorUsuario(Integer usuarioId) {
+        return ticketRepository.findByUsuario_CodigoUsuario(usuarioId);
+    }
+
 }
